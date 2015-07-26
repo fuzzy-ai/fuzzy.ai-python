@@ -2,12 +2,12 @@
 
 import click
 
-import pyskel
+import fuzzyio
 
 
-@click.command('pyskel')
+@click.command('fuzzyio')
 @click.argument('count', type=int, metavar='N')
 def cli(count):
     """Echo a value `N` number of times"""
     for i in range(count):
-        click.echo(pyskel.has_legs)
+        click.echo(fuzzyio.has_legs)

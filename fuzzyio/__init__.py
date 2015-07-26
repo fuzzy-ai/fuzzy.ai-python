@@ -1,3 +1,3 @@
-# pyskel
+# fuzzyio
 
 has_legs = False
