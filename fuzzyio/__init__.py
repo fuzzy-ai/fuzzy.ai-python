@@ -19,4 +19,5 @@
 has_legs = False
 
 class FuzzyIO:
-    pass
+    def __init__(self, apiKey):
+        self.apiKey = apiKey
