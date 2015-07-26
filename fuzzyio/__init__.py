@@ -18,6 +18,14 @@
 
 has_legs = False
 
-class FuzzyIO:
-    def __init__(self, apiKey):
-        self.apiKey = apiKey
+class Agent:
+    def __init__(self, server, id=None):
+        self.server = server
+        self.id = id
+
+class Server:
+    def __init__(self, api_key):
+        self.api_key = api_key
+
+    def evaluate(self, agent_id):
+        pass
