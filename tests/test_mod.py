@@ -1,5 +1,5 @@
 import fuzzyio
+from types import *
 
-
-def test_has_legs():
-    assert not fuzzyio.has_legs
+def test_has_class():
+    assert type(fuzzyio.FuzzyIO) is ClassType
