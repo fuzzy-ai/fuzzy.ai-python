@@ -21,6 +21,28 @@ import os
 API_KEY = os.environ["FUZZY_IO_KEY"]
 AGENT_ID = "ABABABAB"
 
+def default_agent():
+    inputs = {
+        'input1': {
+            'low': [0, 1],
+            'medium': [0, 1, 2],
+            'high': [1, 2]
+        }
+    }
+    outputs = {
+        'output1': {
+            'low': [0, 1],
+            'medium': [0, 1, 2],
+            'high': [1, 2]
+        }
+    }
+    rules = [
+        "IF input1 IS low THEN output1 IS low",
+        "IF input1 IS medium THEN output1 IS medium",
+        "IF input1 IS high THEN output1 IS high"
+    ]
+    return (inputs, outputs, rules)
+
 def test_server_class():
     assert type(fuzzyio.Server) is ClassType
 
@@ -44,25 +66,7 @@ def test_agent_constructor():
 
 def test_agent_keyword_constructor():
     name = 'test_agent_keyword_constructor'
-    inputs = {
-        'input1': {
-            'low': [0, 1],
-            'medium': [0, 1, 2],
-            'high': [1, 2]
-        }
-    }
-    outputs = {
-        'output1': {
-            'low': [0, 1],
-            'medium': [0, 1, 2],
-            'high': [1, 2]
-        }
-    }
-    rules = [
-        "IF input1 IS low THEN output1 IS low",
-        "IF input1 IS medium THEN output1 IS medium",
-        "IF input1 IS high THEN output1 IS high"
-    ]
+    (inputs, outputs, rules) = default_agent()
     f = fuzzyio.Server(API_KEY)
     a = fuzzyio.Agent(f, name=name, inputs=inputs, outputs=outputs, rules=rules)
     assert a.inputs == inputs
@@ -76,25 +80,7 @@ def test_save_method():
 
 def test_save_new_agent():
     name = 'test_save_new_agent'
-    inputs = {
-        'input1': {
-            'low': [0, 1],
-            'medium': [0, 1, 2],
-            'high': [1, 2]
-        }
-    }
-    outputs = {
-        'output1': {
-            'low': [0, 1],
-            'medium': [0, 1, 2],
-            'high': [1, 2]
-        }
-    }
-    rules = [
-        "IF input1 IS low THEN output1 IS low",
-        "IF input1 IS medium THEN output1 IS medium",
-        "IF input1 IS high THEN output1 IS high"
-    ]
+    (inputs, outputs, rules) = default_agent()
     f = fuzzyio.Server(API_KEY)
     a = fuzzyio.Agent(f, name=name, inputs=inputs, outputs=outputs, rules=rules)
     a.save()
