@@ -37,6 +37,10 @@ class Agent:
         else:
             self.__create()
 
+    def get(self):
+        results = self.server.request('GET', '/agent/%s' % self.id)
+        self.__fromResults(results)
+
     def __update(self):
         pass
 
@@ -49,6 +53,9 @@ class Agent:
         if self.name:
             payload['name'] = self.name
         results = self.server.request('POST', '/agent', payload)
+        self.__fromResults(results)
+
+    def __fromResults(self, results):
         self.id = results['id']
         self.inputs = results['inputs']
         self.outputs = results['outputs']

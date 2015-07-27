@@ -85,3 +85,13 @@ def test_save_new_agent():
     a = fuzzyio.Agent(f, name=name, inputs=inputs, outputs=outputs, rules=rules)
     a.save()
     assert type(a.id) is UnicodeType
+
+def test_get_agent():
+    name = 'test_get_agent'
+    (inputs, outputs, rules) = default_agent()
+    f = fuzzyio.Server(API_KEY)
+    a1 = fuzzyio.Agent(f, name=name, inputs=inputs, outputs=outputs, rules=rules)
+    a1.save()
+    a2 = fuzzyio.Agent(f, id=a1.id)
+    a2.get()
+    assert a2.inputs['input1']['low'][0] == a1.inputs['input1']['low'][0]
