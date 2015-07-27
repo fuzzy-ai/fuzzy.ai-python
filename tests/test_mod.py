@@ -95,3 +95,21 @@ def test_get_agent():
     a2 = fuzzyio.Agent(f, id=a1.id)
     a2.get()
     assert a2.inputs['input1']['low'][0] == a1.inputs['input1']['low'][0]
+
+def test_update_agent():
+    name = 'test_get_agent'
+    (inputs, outputs, rules) = default_agent()
+    f = fuzzyio.Server(API_KEY)
+    a1 = fuzzyio.Agent(f, name=name, inputs=inputs, outputs=outputs, rules=rules)
+    a1.save()
+    a1.inputs['input2'] = {
+        'low': [0, 1],
+        'medium': [0, 1, 2],
+        'high': [1, 2]
+    }
+    a1.save()
+
+    a2 = fuzzyio.Agent(f, id=a1.id)
+    a2.get()
+
+    assert 'input2' in a2.inputs

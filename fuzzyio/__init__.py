@@ -42,7 +42,15 @@ class Agent:
         self.__fromResults(results)
 
     def __update(self):
-        pass
+        payload = {
+            'inputs': self.inputs,
+            'outputs': self.outputs,
+            'rules': self.rules
+        }
+        if self.name:
+            payload['name'] = self.name
+        results = self.server.request('PUT', '/agent/%s' % self.id, payload)
+        self.__fromResults(results)
 
     def __create(self):
         payload = {
