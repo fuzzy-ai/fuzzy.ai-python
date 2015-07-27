@@ -16,16 +16,83 @@
 
 # XXX: delete this after fixing up the CLI test_has_class
 
+from __future__ import print_function
+import httplib2
+import json
+
 has_legs = False
 
 class Agent:
-    def __init__(self, server, id=None):
+    def __init__(self, server, id=None, name=None, inputs=None, outputs=None, rules=None):
         self.server = server
         self.id = id
+        self.inputs = inputs
+        self.outputs = outputs
+        self.rules = rules
+        self.name = name
+
+    def save(self):
+        if self.id:
+            self.__update()
+        else:
+            self.__create()
+
+    def __update(self):
+        pass
+
+    def __create(self):
+        payload = {
+            'inputs': self.inputs,
+            'outputs': self.outputs,
+            'rules': self.rules
+        }
+        if self.name:
+            payload['name'] = self.name
+        results = self.server.request('POST', '/agent', payload)
+        self.id = results['id']
+        self.inputs = results['inputs']
+        self.outputs = results['outputs']
+        self.rules = results['rules']
+        self.updatedAt = results['updatedAt']
+        self.createdAt = results['createdAt']
+        self.latestVersion = results['latestVersion']
 
 class Server:
-    def __init__(self, api_key):
+    def __init__(self, api_key, root="https://api.fuzzy.io"):
         self.api_key = api_key
+        self.root = root
 
-    def evaluate(self, agent_id):
+    def request(self, method, url, payload=None):
+
+        http = httplib2.Http()
+        uri = "%s%s" % (self.root, url)
+        headers = {
+            "Authorization": "Bearer %s" % (self.api_key,)
+        }
+
+        if payload:
+            headers["Content-Type"] = "application/json; charset=utf-8"
+            body = json.dumps(payload)
+        else:
+            body = None
+
+        (response, output) = http.request(uri, method, body, headers)
+
+        results = None
+
+        if 'content-type' in response:
+            contentType = str.split(response['content-type'], ';', 1)
+            if contentType[0] == "application/json":
+                results = json.loads(output)
+
+        if response.status != 200:
+            if results:
+                message = results["message"]
+            else:
+                message = output
+            raise Exception("Bad status code %d: %s" % (response.status, message))
+
+        return results
+
+    def evaluate(self, agent_id, inputs):
         pass

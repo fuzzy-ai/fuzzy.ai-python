@@ -16,8 +16,9 @@
 
 import fuzzyio
 from types import *
+import os
 
-API_KEY = "BABABABA"
+API_KEY = os.environ["FUZZY_IO_KEY"]
 AGENT_ID = "ABABABAB"
 
 def test_server_class():
@@ -40,3 +41,61 @@ def test_agent_constructor():
     assert type(a) is InstanceType
     assert type(a.id) is StringType
     assert a.id == AGENT_ID
+
+def test_agent_keyword_constructor():
+    name = 'test_agent_keyword_constructor'
+    inputs = {
+        'input1': {
+            'low': [0, 1],
+            'medium': [0, 1, 2],
+            'high': [1, 2]
+        }
+    }
+    outputs = {
+        'output1': {
+            'low': [0, 1],
+            'medium': [0, 1, 2],
+            'high': [1, 2]
+        }
+    }
+    rules = [
+        "IF input1 IS low THEN output1 IS low",
+        "IF input1 IS medium THEN output1 IS medium",
+        "IF input1 IS high THEN output1 IS high"
+    ]
+    f = fuzzyio.Server(API_KEY)
+    a = fuzzyio.Agent(f, name=name, inputs=inputs, outputs=outputs, rules=rules)
+    assert a.inputs == inputs
+    assert a.outputs == outputs
+    assert a.rules == rules
+
+def test_save_method():
+    f = fuzzyio.Server(API_KEY)
+    a = fuzzyio.Agent(f, AGENT_ID)
+    assert type(a.save) is MethodType
+
+def test_save_new_agent():
+    name = 'test_save_new_agent'
+    inputs = {
+        'input1': {
+            'low': [0, 1],
+            'medium': [0, 1, 2],
+            'high': [1, 2]
+        }
+    }
+    outputs = {
+        'output1': {
+            'low': [0, 1],
+            'medium': [0, 1, 2],
+            'high': [1, 2]
+        }
+    }
+    rules = [
+        "IF input1 IS low THEN output1 IS low",
+        "IF input1 IS medium THEN output1 IS medium",
+        "IF input1 IS high THEN output1 IS high"
+    ]
+    f = fuzzyio.Server(API_KEY)
+    a = fuzzyio.Agent(f, name=name, inputs=inputs, outputs=outputs, rules=rules)
+    a.save()
+    assert type(a.id) is UnicodeType
