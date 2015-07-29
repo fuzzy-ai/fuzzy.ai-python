@@ -102,6 +102,9 @@ class Agent:
     def delete(self):
         self.server.request('DELETE', '/agent/%s' % self.id)
 
+    def evaluate(self, inputs):
+        return self.server.request('POST', '/agent/%s' % self.id, inputs)
+
 class Server:
     def __init__(self, api_key, root="https://api.fuzzy.io"):
         self.api_key = api_key
@@ -140,4 +143,4 @@ class Server:
         return results
 
     def evaluate(self, agent_id, inputs):
-        pass
+        return self.request('POST', '/agent/%s' % agent_id, inputs)

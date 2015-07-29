@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import print_function
 import fuzzyio
 from types import *
 import os
@@ -143,3 +144,27 @@ def test_delete_agent():
         assert True
     except:
         assert False
+
+def test_evaluate_agent():
+    name = 'test_evaluate_agent'
+    (inputs, outputs, rules) = default_agent()
+    f = fuzzyio.Server(API_KEY)
+    a = fuzzyio.Agent(f, name=name, inputs=inputs, outputs=outputs, rules=rules)
+    a.save()
+    results = a.evaluate({'input1': 1.5})
+    assert type(results) is DictionaryType
+    assert 'output1' in results
+    assert type(results['output1']) is FloatType
+    a.delete()
+
+def test_server_evaluate():
+    name = 'test_evaluate_agent'
+    (inputs, outputs, rules) = default_agent()
+    f = fuzzyio.Server(API_KEY)
+    a = fuzzyio.Agent(f, name=name, inputs=inputs, outputs=outputs, rules=rules)
+    a.save()
+    results = f.evaluate(a.id, {'input1': 0.5})
+    assert type(results) is DictionaryType
+    assert 'output1' in results
+    assert type(results['output1']) is FloatType
+    a.delete()
