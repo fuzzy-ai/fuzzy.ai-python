@@ -14,13 +14,32 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# XXX: delete this after fixing up the CLI test_has_class
-
 from __future__ import print_function
 import httplib2
 import json
 
+# XXX: delete this after fixing up the CLI test_has_class
+
 has_legs = False
+
+class HTTPError(Exception):
+    def __init__(self, status, message):
+        self.status = status
+        self.message = message
+    def __str__(self):
+        return "HTTPError <%d>: '%s'" % (self.status,self.message)
+
+class DeletedAgentError(Exception):
+    def __init__(self, id):
+        self.id = id
+    def __str__(self):
+        return "DeletedAgentError <%s>" % (self.id,)
+
+class NoSuchAgentError(Exception):
+    def __init__(self, id):
+        self.id = id
+    def __str__(self):
+        return "NoSuchAgentError <%s>" % (self.id,)
 
 class Agent:
     def __init__(self, server, id=None, name=None, inputs=None, outputs=None, rules=None):
@@ -38,8 +57,16 @@ class Agent:
             self.__create()
 
     def get(self):
-        results = self.server.request('GET', '/agent/%s' % self.id)
-        self.__fromResults(results)
+        try:
+            results = self.server.request('GET', '/agent/%s' % self.id)
+            self.__fromResults(results)
+        except HTTPError as err:
+            if err.status == 404:
+                raise NoSuchAgentError(self.id)
+            elif err.status == 410:
+                raise DeletedAgentError(self.id)
+            else:
+                raise err
 
     def __update(self):
         payload = {
@@ -71,6 +98,9 @@ class Agent:
         self.updatedAt = results['updatedAt']
         self.createdAt = results['createdAt']
         self.latestVersion = results['latestVersion']
+
+    def delete(self):
+        self.server.request('DELETE', '/agent/%s' % self.id)
 
 class Server:
     def __init__(self, api_key, root="https://api.fuzzy.io"):
@@ -105,7 +135,7 @@ class Server:
                 message = results["message"]
             else:
                 message = output
-            raise Exception("Bad status code %d: %s" % (response.status, message))
+            raise HTTPError(response.status, message)
 
         return results
 

@@ -96,8 +96,21 @@ def test_get_agent():
     a2.get()
     assert a2.inputs['input1']['low'][0] == a1.inputs['input1']['low'][0]
 
+def test_get_nonexistent_agent():
+    name = 'test_get_nonexistent_agent'
+    (inputs, outputs, rules) = default_agent()
+    f = fuzzyio.Server(API_KEY)
+    a1 = fuzzyio.Agent(f, id='***NONEXISTENT***')
+    try:
+        a1.get()
+        assert False
+    except fuzzyio.NoSuchAgentError:
+        assert True
+    except:
+        assert False
+
 def test_update_agent():
-    name = 'test_get_agent'
+    name = 'test_update_agent'
     (inputs, outputs, rules) = default_agent()
     f = fuzzyio.Server(API_KEY)
     a1 = fuzzyio.Agent(f, name=name, inputs=inputs, outputs=outputs, rules=rules)
@@ -113,3 +126,20 @@ def test_update_agent():
     a2.get()
 
     assert 'input2' in a2.inputs
+
+def test_delete_agent():
+    name = 'test_delete_agent'
+    (inputs, outputs, rules) = default_agent()
+    f = fuzzyio.Server(API_KEY)
+    a1 = fuzzyio.Agent(f, name=name, inputs=inputs, outputs=outputs, rules=rules)
+    a1.save()
+    a1.delete()
+    # We shouldn't be able to get a deleted agent
+    try:
+        a2 = fuzzyio.Agent(f, id=a1.id)
+        a2.get()
+        assert False
+    except fuzzyio.DeletedAgentError:
+        assert True
+    except:
+        assert False
