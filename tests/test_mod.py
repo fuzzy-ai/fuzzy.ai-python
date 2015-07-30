@@ -157,6 +157,19 @@ def test_evaluate_agent():
     assert type(results['output1']) is FloatType
     a.delete()
 
+def test_agent_evaluate_with_id():
+    name = 'test_evaluate_agent'
+    (inputs, outputs, rules) = default_agent()
+    f = fuzzyio.Server(API_KEY)
+    a = fuzzyio.Agent(f, name=name, inputs=inputs, outputs=outputs, rules=rules)
+    a.save()
+    (results, evid) = a.evaluate_with_id({'input1': 1.5})
+    assert type(evid) is StringType
+    assert type(results) is DictionaryType
+    assert 'output1' in results
+    assert type(results['output1']) is FloatType
+    a.delete()
+
 def test_server_evaluate():
     name = 'test_evaluate_agent'
     (inputs, outputs, rules) = default_agent()
@@ -165,6 +178,19 @@ def test_server_evaluate():
     a.save()
     results = f.evaluate(a.id, {'input1': 0.5})
     assert type(results) is DictionaryType
+    assert 'output1' in results
+    assert type(results['output1']) is FloatType
+    a.delete()
+
+def test_server_evaluate_with_id():
+    name = 'test_evaluate_agent'
+    (inputs, outputs, rules) = default_agent()
+    f = fuzzyio.Server(API_KEY)
+    a = fuzzyio.Agent(f, name=name, inputs=inputs, outputs=outputs, rules=rules)
+    a.save()
+    (results, evid) = f.evaluate_with_id(a.id, {'input1': 0.5})
+    assert type(results) is DictionaryType
+    assert type(evid) is StringType
     assert 'output1' in results
     assert type(results['output1']) is FloatType
     a.delete()

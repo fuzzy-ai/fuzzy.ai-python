@@ -58,7 +58,7 @@ class Agent:
 
     def get(self):
         try:
-            results = self.server.request('GET', '/agent/%s' % self.id)
+            (results, response) = self.server.request('GET', '/agent/%s' % self.id)
             self.__fromResults(results)
         except HTTPError as err:
             if err.status == 404:
@@ -76,7 +76,7 @@ class Agent:
         }
         if self.name:
             payload['name'] = self.name
-        results = self.server.request('PUT', '/agent/%s' % self.id, payload)
+        (results, response) = self.server.request('PUT', '/agent/%s' % self.id, payload)
         self.__fromResults(results)
 
     def __create(self):
@@ -87,7 +87,7 @@ class Agent:
         }
         if self.name:
             payload['name'] = self.name
-        results = self.server.request('POST', '/agent', payload)
+        (results, response) = self.server.request('POST', '/agent', payload)
         self.__fromResults(results)
 
     def __fromResults(self, results):
@@ -102,8 +102,13 @@ class Agent:
     def delete(self):
         self.server.request('DELETE', '/agent/%s' % self.id)
 
+    def evaluate_with_id(self, inputs):
+        (results, response) = self.server.request('POST', '/agent/%s' % self.id, inputs)
+        return (results, response['x-evaluation-id'])
+
     def evaluate(self, inputs):
-        return self.server.request('POST', '/agent/%s' % self.id, inputs)
+        (results, evid) = self.evaluate_with_id(inputs)
+        return results
 
 class Server:
     def __init__(self, api_key, root="https://api.fuzzy.io"):
@@ -140,7 +145,12 @@ class Server:
                 message = output
             raise HTTPError(response.status, message)
 
-        return results
+        return (results, response)
+
+    def evaluate_with_id(self, agent_id, inputs):
+        (results, response) = self.request('POST', '/agent/%s' % agent_id, inputs)
+        return (results, response['x-evaluation-id'])
 
     def evaluate(self, agent_id, inputs):
-        return self.request('POST', '/agent/%s' % agent_id, inputs)
+        (results, evid) = self.evaluate_with_id(agent_id, inputs)
+        return results
