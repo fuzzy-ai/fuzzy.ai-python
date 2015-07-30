@@ -18,31 +18,140 @@ from __future__ import print_function
 import httplib2
 import json
 
+"""fuzzy.io client script
+
+This module provides two important classes -- Server and Agent -- for accessing
+the fuzzy.io API.
+"""
+
 # XXX: delete this after fixing up the CLI test_has_class
 
 has_legs = False
 
 class HTTPError(Exception):
+    """An error that occurs during an HTTP request"""
     def __init__(self, status, message):
+        """Arguments:
+
+        status -- Numerical HTTP status
+        message -- Message from the server
+        """
         self.status = status
         self.message = message
     def __str__(self):
         return "HTTPError <%d>: '%s'" % (self.status,self.message)
 
 class DeletedAgentError(Exception):
+    """Error thrown when accessing an agent that was deleted"""
     def __init__(self, id):
+        """Arguments:
+
+        id -- ID of the agent
+        """
         self.id = id
     def __str__(self):
         return "DeletedAgentError <%s>" % (self.id,)
 
 class NoSuchAgentError(Exception):
+    """Error thrown when accessing an agent that never existed"""
     def __init__(self, id):
         self.id = id
     def __str__(self):
         return "NoSuchAgentError <%s>" % (self.id,)
 
+class Server:
+    """The Fuzzy.io server"""
+    def __init__(self, api_key, root="https://api.fuzzy.io"):
+        """Arguments:
+
+        api_key -- User's API key. Keep this secret!
+        root -- The root of the API. Use this if you test with mocks
+        """
+        self.api_key = api_key
+        self.root = root
+
+    def evaluate_with_id(self, agent_id, inputs):
+        """Make a fuzzy controller evaluation and return the results.
+
+        Arguments:
+
+        agent_id -- the Agent to call
+        inputs -- dictionary of input values to send
+
+        Returns a tuple of the results and the evaluation ID, used for feedback.
+        """
+        (results, response) = self.request('POST', '/agent/%s' % agent_id, inputs)
+        return (results, response['x-evaluation-id'])
+
+    def evaluate(self, agent_id, inputs):
+        """Make a fuzzy controller evaluation and return the results.
+
+        Arguments:
+
+        agent_id -- the Agent to call
+        inputs -- dictionary of input values to send
+
+        Returns the results as a dictionary.
+        """
+        (results, evid) = self.evaluate_with_id(agent_id, inputs)
+        return results
+
+    def request(self, method, url, payload=None):
+        http = httplib2.Http()
+        uri = "%s%s" % (self.root, url)
+        headers = {
+            "Authorization": "Bearer %s" % (self.api_key,)
+        }
+
+        if payload:
+            headers["Content-Type"] = "application/json; charset=utf-8"
+            body = json.dumps(payload)
+        else:
+            body = None
+
+        (response, output) = http.request(uri, method, body, headers)
+
+        results = None
+
+        if 'content-type' in response:
+            contentType = str.split(response['content-type'], ';', 1)
+            if contentType[0] == "application/json":
+                results = json.loads(output)
+
+        if response.status != 200:
+            if results:
+                message = results["message"]
+            else:
+                message = output
+            raise HTTPError(response.status, message)
+
+        return (results, response)
+
 class Agent:
+    """A remote agent that can make evaluations"""
     def __init__(self, server, id=None, name=None, inputs=None, outputs=None, rules=None):
+        """Initialize the agent.
+
+        Arguments:
+
+        server -- The Server instance to use for communication.
+
+        Keyword arguments:
+
+        id -- ID of the agent. Use this if the Agent is already created.
+        name -- Name of a new Agent.
+        inputs -- Input definition for a new agent. Dictionary mapping strings
+            (input names) to dictionaries, each of which maps strings (set names)
+            to arrays of floats. Each array can have 2 (slope up or down), 3
+            (triangle), or 4 (trapezoid) numbers.
+        outputs -- Output definition for a new agent. Dictionary mapping strings
+            (output names) to dictionaries, each of which maps strings (set names)
+            to arrays of floats. Each array can have 2 (slope up or down), 3
+            (triangle), or 4 (trapezoid) numbers.
+        rules -- Rules for a new agent. An array of strings, each of which is
+            a rule like 'IF input1 IS low AND input2 IS high THEN output1 IS medium'.
+        """
+
         self.server = server
         self.id = id
         self.inputs = inputs
@@ -51,12 +160,14 @@ class Agent:
         self.name = name
 
     def save(self):
+        """Save a new or modified Agent."""
         if self.id:
             self.__update()
         else:
             self.__create()
 
     def get(self):
+        """Get the full Agent information from the server."""
         try:
             (results, response) = self.server.request('GET', '/agent/%s' % self.id)
             self.__fromResults(results)
@@ -100,57 +211,29 @@ class Agent:
         self.latestVersion = results['latestVersion']
 
     def delete(self):
+        """Delete an agent from the server."""
         self.server.request('DELETE', '/agent/%s' % self.id)
 
     def evaluate_with_id(self, inputs):
+        """Make a fuzzy evaluation.
+
+        Arguments:
+        inputs -- a dictionary mapping string input names to float values.
+
+        Returns a 2-tuple: a dictionary mapping string output names to float
+        values, and a string for the evaluation ID.
+        """
         (results, response) = self.server.request('POST', '/agent/%s' % self.id, inputs)
         return (results, response['x-evaluation-id'])
 
     def evaluate(self, inputs):
+        """Make a fuzzy evaluation.
+
+        Arguments:
+        inputs -- a dictionary mapping string input names to float values.
+
+        Returns a dictionary mapping string output names to float
+        values. If you need the evaluation ID, use evaluate_with_id().
+        """
         (results, evid) = self.evaluate_with_id(inputs)
-        return results
-
-class Server:
-    def __init__(self, api_key, root="https://api.fuzzy.io"):
-        self.api_key = api_key
-        self.root = root
-
-    def request(self, method, url, payload=None):
-
-        http = httplib2.Http()
-        uri = "%s%s" % (self.root, url)
-        headers = {
-            "Authorization": "Bearer %s" % (self.api_key,)
-        }
-
-        if payload:
-            headers["Content-Type"] = "application/json; charset=utf-8"
-            body = json.dumps(payload)
-        else:
-            body = None
-
-        (response, output) = http.request(uri, method, body, headers)
-
-        results = None
-
-        if 'content-type' in response:
-            contentType = str.split(response['content-type'], ';', 1)
-            if contentType[0] == "application/json":
-                results = json.loads(output)
-
-        if response.status != 200:
-            if results:
-                message = results["message"]
-            else:
-                message = output
-            raise HTTPError(response.status, message)
-
-        return (results, response)
-
-    def evaluate_with_id(self, agent_id, inputs):
-        (results, response) = self.request('POST', '/agent/%s' % agent_id, inputs)
-        return (results, response['x-evaluation-id'])
-
-    def evaluate(self, agent_id, inputs):
-        (results, evid) = self.evaluate_with_id(agent_id, inputs)
         return results
