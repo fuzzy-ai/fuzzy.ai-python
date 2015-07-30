@@ -158,7 +158,7 @@ def test_evaluate_agent():
     a.delete()
 
 def test_agent_evaluate_with_id():
-    name = 'test_evaluate_agent'
+    name = 'test_agent_evaluate_with_id'
     (inputs, outputs, rules) = default_agent()
     f = fuzzyio.Server(API_KEY)
     a = fuzzyio.Agent(f, name=name, inputs=inputs, outputs=outputs, rules=rules)
@@ -183,7 +183,7 @@ def test_server_evaluate():
     a.delete()
 
 def test_server_evaluate_with_id():
-    name = 'test_evaluate_agent'
+    name = 'test_server_evaluate_with_id'
     (inputs, outputs, rules) = default_agent()
     f = fuzzyio.Server(API_KEY)
     a = fuzzyio.Agent(f, name=name, inputs=inputs, outputs=outputs, rules=rules)
