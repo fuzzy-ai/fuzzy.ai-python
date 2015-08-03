@@ -204,3 +204,23 @@ def test_evaluation():
     (results, evid) = f.evaluate_with_id(a.id, {'input1': 0.5})
     e = fuzzyio.Evaluation(f, evid)
     assert e.id == evid
+
+def test_get_evaluation():
+    name = 'test_evaluation'
+    (inputs, outputs, rules) = default_agent()
+    f = fuzzyio.Server(API_KEY)
+    a = fuzzyio.Agent(f, name=name, inputs=inputs, outputs=outputs, rules=rules)
+    a.save()
+    (results, evid) = f.evaluate_with_id(a.id, {'input1': 0.5})
+    e = fuzzyio.Evaluation(f, evid)
+    e.get()
+    assert type(e.id) == StringType
+    assert type(e.input) == DictionaryType
+    assert type(e.fuzzified) == DictionaryType
+    assert type(e.rules) == ListType
+    assert type(e.inferred) == DictionaryType
+    assert type(e.clipped) == DictionaryType
+    assert type(e.combined) == DictionaryType
+    assert type(e.centroid) == DictionaryType
+    assert type(e.crisp) == DictionaryType
+    assert type(e.createdAt) == UnicodeType

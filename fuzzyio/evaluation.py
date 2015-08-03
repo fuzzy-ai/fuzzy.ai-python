@@ -20,3 +20,16 @@ class Evaluation:
         """Specifies the evaluation we're interested in."""
         self.server = server
         self.id = evid
+    def get(self):
+        (results, headers) = self.server.request("GET", "/evaluation/%s" % (self.id,))
+        self.__fromResults(results)
+    def __fromResults(self, results):
+        self.input = results['input']
+        self.fuzzified = results['fuzzified']
+        self.rules = results['rules']
+        self.inferred = results['inferred']
+        self.clipped = results['clipped']
+        self.combined = results['combined']
+        self.centroid = results['centroid']
+        self.crisp = results['crisp']
+        self.createdAt = results['createdAt']
