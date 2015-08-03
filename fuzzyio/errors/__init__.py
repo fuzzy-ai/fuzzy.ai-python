@@ -1,4 +1,4 @@
-# fuzzyio
+# fuzzyio/errors/__init__.py
 
 # Copyright 2015 9165584 Canada Corporation <legal@fuzzy.io>
 #
@@ -14,17 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from agent import Agent
-from server import Server
-from evaluation import Evaluation
-
-from errors import DeletedAgentError, NoSuchAgentError, HTTPError
-
-"""fuzzy.io library
-
-This module provides important classes for accessing the fuzzy.io API.
-"""
-
-# XXX: delete this after fixing up the CLI test_has_class
-
-has_legs = False
+from deleted_agent import DeletedAgentError
+from no_such_agent import NoSuchAgentError
+from http import HTTPError

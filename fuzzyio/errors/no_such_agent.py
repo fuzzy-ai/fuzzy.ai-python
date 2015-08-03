@@ -1,5 +1,5 @@
-# fuzzyio
-
+# fuzzyio/errors/no_such_agent.py
+#
 # Copyright 2015 9165584 Canada Corporation <legal@fuzzy.io>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,17 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from agent import Agent
-from server import Server
-from evaluation import Evaluation
-
-from errors import DeletedAgentError, NoSuchAgentError, HTTPError
-
-"""fuzzy.io library
-
-This module provides important classes for accessing the fuzzy.io API.
-"""
-
-# XXX: delete this after fixing up the CLI test_has_class
-
-has_legs = False
+class NoSuchAgentError(Exception):
+    """Error thrown when accessing an agent that never existed"""
+    def __init__(self, id):
+        self.id = id
+    def __str__(self):
+        return "NoSuchAgentError <%s>" % (self.id,)

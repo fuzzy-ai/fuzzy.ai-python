@@ -1,5 +1,5 @@
-# fuzzyio
-
+# fuzzyio/errors/http.py
+#
 # Copyright 2015 9165584 Canada Corporation <legal@fuzzy.io>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,17 +14,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from agent import Agent
-from server import Server
-from evaluation import Evaluation
+class HTTPError(Exception):
+    """An error that occurs during an HTTP request"""
+    def __init__(self, status, message):
+        """Arguments:
 
-from errors import DeletedAgentError, NoSuchAgentError, HTTPError
-
-"""fuzzy.io library
-
-This module provides important classes for accessing the fuzzy.io API.
-"""
-
-# XXX: delete this after fixing up the CLI test_has_class
-
-has_legs = False
+        status -- Numerical HTTP status
+        message -- Message from the server
+        """
+        self.status = status
+        self.message = message
+    def __str__(self):
+        return "HTTPError <%d>: '%s'" % (self.status,self.message)
