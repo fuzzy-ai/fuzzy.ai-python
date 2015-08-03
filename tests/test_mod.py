@@ -194,3 +194,13 @@ def test_server_evaluate_with_id():
     assert 'output1' in results
     assert type(results['output1']) is FloatType
     a.delete()
+
+def test_evaluation():
+    name = 'test_evaluation'
+    (inputs, outputs, rules) = default_agent()
+    f = fuzzyio.Server(API_KEY)
+    a = fuzzyio.Agent(f, name=name, inputs=inputs, outputs=outputs, rules=rules)
+    a.save()
+    (results, evid) = f.evaluate_with_id(a.id, {'input1': 0.5})
+    e = fuzzyio.Evaluation(f, evid)
+    assert e.id == evid

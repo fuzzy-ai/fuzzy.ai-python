@@ -237,3 +237,10 @@ class Agent:
         """
         (results, evid) = self.evaluate_with_id(inputs)
         return results
+
+class Evaluation:
+    """Introspection data on a single evaluation"""
+    def __init__(self, server, evid):
+        """Specifies the evaluation we're interested in."""
+        self.server = server
+        self.id = evid
