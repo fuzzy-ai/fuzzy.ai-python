@@ -33,3 +33,6 @@ class Evaluation:
         self.centroid = results['centroid']
         self.crisp = results['crisp']
         self.createdAt = results['createdAt']
+    def feedback(self):
+        (results, headers) = self.server.request("GET", "/evaluation/%s/feedback" % (self.id,))
+        return results

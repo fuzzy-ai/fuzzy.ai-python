@@ -251,3 +251,19 @@ def test_save_feedback():
     assert type(fb.id) == UnicodeType
     assert type(fb.createdAt) == UnicodeType
     a.delete()
+
+def test_get_feedback():
+    name = 'test_get_feedback'
+    (inputs, outputs, rules) = default_agent()
+    f = fuzzyio.Server(API_KEY)
+    a = fuzzyio.Agent(f, name=name, inputs=inputs, outputs=outputs, rules=rules)
+    a.save()
+    (results, evid) = a.evaluate_with_id({'input1': 0.5})
+    fb = fuzzyio.Feedback(f, evid, performance=8.1)
+    fb.save()
+    e = fuzzyio.Evaluation(f, evid)
+    fbs = e.feedback()
+    assert type(fbs) == ListType
+    assert len(fbs) == 1
+    assert fbs[0]['id'] == fb.id
+    a.delete()
