@@ -24,7 +24,3 @@ from errors import DeletedAgentError, NoSuchAgentError, HTTPError
 
 This module provides important classes for accessing the fuzzy.io API.
 """
-
-# XXX: delete this after fixing up the CLI test_has_class
-
-has_legs = False
