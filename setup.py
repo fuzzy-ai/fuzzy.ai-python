@@ -6,7 +6,7 @@ with codecs_open('README.rst', encoding='utf-8') as f:
     long_description = f.read()
 
 setup(name='fuzzyio',
-      version='0.0.1',
+      version='0.1.0',
       description=u"fuzzy.io API",
       long_description=long_description,
       classifiers=[],
@@ -18,14 +18,7 @@ setup(name='fuzzyio',
       packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
       include_package_data=True,
       zip_safe=False,
-      install_requires=[
-          'click'
-      ],
       extras_require={
           'test': ['pytest'],
-      },
-      entry_points="""
-      [console_scripts]
-      fuzzyio=fuzzyio.scripts.cli:cli
-      """
+      }
       )
