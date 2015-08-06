@@ -1,4 +1,4 @@
-# fuzzyio
+# fuzzyio/feedback.py
 
 # Copyright 2015 9165584 Canada Corporation <legal@fuzzy.io>
 #
@@ -14,17 +14,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from agent import Agent
-from server import Server
-from evaluation import Evaluation
-from feedback import Feedback
-from errors import DeletedAgentError, NoSuchAgentError, HTTPError
-
-"""fuzzy.io library
-
-This module provides important classes for accessing the fuzzy.io API.
-"""
-
-# XXX: delete this after fixing up the CLI test_has_class
-
-has_legs = False
+class Feedback:
+    """Feedback on an evaluation"""
+    def __init__(self, server, evid=None, id=None, **kwargs):
+        self.server = server
+        self.evid = evid
+        self.id = id
+        self.properties = kwargs
+    def save(self):
+        if self.id:
+            raise Exception("Feedback is immutable")
+        (results, response) = self.server.request('POST', '/evaluation/%s/feedback' % (self.evid), self.properties)
+        self.id = results['id']
+        self.createdAt = results['createdAt']

@@ -204,9 +204,10 @@ def test_evaluation():
     (results, evid) = f.evaluate_with_id(a.id, {'input1': 0.5})
     e = fuzzyio.Evaluation(f, evid)
     assert e.id == evid
+    a.delete()
 
 def test_get_evaluation():
-    name = 'test_evaluation'
+    name = 'test_get_evaluation'
     (inputs, outputs, rules) = default_agent()
     f = fuzzyio.Server(API_KEY)
     a = fuzzyio.Agent(f, name=name, inputs=inputs, outputs=outputs, rules=rules)
@@ -224,3 +225,29 @@ def test_get_evaluation():
     assert type(e.centroid) == DictionaryType
     assert type(e.crisp) == DictionaryType
     assert type(e.createdAt) == UnicodeType
+    a.delete()
+
+def test_feedback():
+    name = 'test_feedback'
+    (inputs, outputs, rules) = default_agent()
+    f = fuzzyio.Server(API_KEY)
+    a = fuzzyio.Agent(f, name=name, inputs=inputs, outputs=outputs, rules=rules)
+    a.save()
+    (results, evid) = a.evaluate_with_id({'input1': 0.5})
+    fb = fuzzyio.Feedback(f, evid, performance=8.1)
+    assert fb.evid == evid
+    assert fb.properties['performance'] == 8.1
+    a.delete()
+
+def test_save_feedback():
+    name = 'test_save_feedback'
+    (inputs, outputs, rules) = default_agent()
+    f = fuzzyio.Server(API_KEY)
+    a = fuzzyio.Agent(f, name=name, inputs=inputs, outputs=outputs, rules=rules)
+    a.save()
+    (results, evid) = a.evaluate_with_id({'input1': 0.5})
+    fb = fuzzyio.Feedback(f, evid, performance=8.1)
+    fb.save()
+    assert type(fb.id) == UnicodeType
+    assert type(fb.createdAt) == UnicodeType
+    a.delete()
