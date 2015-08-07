@@ -1,5 +1,5 @@
-fuzzyio
-=======
+Fuzzy.io SDK for Python
+=======================
 
 A Python package for accessing the fuzzy.io API.
 
@@ -101,8 +101,8 @@ The Evaluation class represents a single evaluation. It includes a get() method
 to fetch details about the evaluation and the feedback() method to fetch
 feedback on the evaluation.
 
- The Feedback class represents a single feedback data point. It has a save()
- method to generate feedback for an evaluation.
+The Feedback class represents a single feedback data point. It has a save()
+method to generate feedback for an evaluation.
 
 See also
 --------
