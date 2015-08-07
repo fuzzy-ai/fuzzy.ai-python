@@ -55,3 +55,8 @@ def evaluate(agent_id, inputs):
     """
     agent = Agent(agent_id)
     return agent.evaluate(inputs)
+
+def feedback(evaluation_id, **kwargs):
+    fb = Feedback(evaluation_id, properties=kwargs)
+    fb.save()
+    return fb

@@ -187,6 +187,18 @@ def test_server_evaluate_with_id():
     assert type(results['output1']) is FloatType
     a.delete()
 
+def test_server_feedback():
+    name = 'test_server_evaluate_with_id'
+    (inputs, outputs, rules) = default_agent()
+    fuzzyio.setup(API_KEY)
+    a = fuzzyio.Agent(name=name, inputs=inputs, outputs=outputs, rules=rules)
+    a.save()
+    (results, evid) = fuzzyio.evaluate_with_id(a.id, {'input1': 0.5})
+    fb = fuzzyio.feedback(evid, performance=8.1)
+    assert type(fb.id) == UnicodeType
+    assert type(fb.createdAt) == UnicodeType
+    a.delete()
+
 def test_evaluation():
     name = 'test_evaluation'
     (inputs, outputs, rules) = default_agent()

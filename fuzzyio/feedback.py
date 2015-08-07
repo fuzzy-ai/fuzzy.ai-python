@@ -18,10 +18,13 @@ from server import request
 
 class Feedback:
     """Feedback on an evaluation"""
-    def __init__(self, evid=None, id=None, **kwargs):
+    def __init__(self, evid=None, id=None, properties=None, **kwargs):
         self.evid = evid
         self.id = id
-        self.properties = kwargs
+        if properties:
+            self.properties = properties
+        else:
+            self.properties = kwargs
     def save(self):
         if self.id:
             raise Exception("Feedback is immutable")
