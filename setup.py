@@ -6,7 +6,7 @@ with codecs_open('README.rst', encoding='utf-8') as f:
     long_description = f.read()
 
 setup(name='fuzzyio',
-      version='0.1.2',
+      version='0.2.0',
       description=u"fuzzy.io API",
       long_description=long_description,
       classifiers=[],
