@@ -15,12 +15,43 @@
 # limitations under the License.
 
 from agent import Agent
-from server import Server
 from evaluation import Evaluation
 from feedback import Feedback
 from errors import DeletedAgentError, NoSuchAgentError, HTTPError
+import server
 
 """fuzzy.io library
 
 This module provides important classes for accessing the fuzzy.io API.
 """
+
+def setup(api_key, root=None):
+    server.api_key = api_key
+    if root:
+        server.root = root
+
+def evaluate_with_id(agent_id, inputs):
+    """Make a fuzzy controller evaluation and return the results.
+
+    Arguments:
+
+    agent_id -- the Agent to call
+    inputs -- dictionary of input values to send
+
+    Returns a tuple of the results and the evaluation ID, used for feedback.
+    """
+    agent = Agent(agent_id)
+    return agent.evaluate_with_id(inputs)
+
+def evaluate(agent_id, inputs):
+    """Make a fuzzy controller evaluation and return the results.
+
+    Arguments:
+
+    agent_id -- the Agent to call
+    inputs -- dictionary of input values to send
+
+    Returns the results as a dictionary.
+    """
+    agent = Agent(agent_id)
+    return agent.evaluate(inputs)

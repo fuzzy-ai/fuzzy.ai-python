@@ -18,71 +18,44 @@ import httplib2
 import json
 
 from errors import HTTPError
+from types import StringType
 
-class Server:
-    """The Fuzzy.io server"""
-    def __init__(self, api_key, root="https://api.fuzzy.io"):
-        """Arguments:
+api_key = None
+root = "https://api.fuzzy.io"
 
-        api_key -- User's API key. Keep this secret!
-        root -- The root of the API. Use this if you test with mocks
-        """
-        self.api_key = api_key
-        self.root = root
+http = httplib2.Http()
 
-    def evaluate_with_id(self, agent_id, inputs):
-        """Make a fuzzy controller evaluation and return the results.
+def request(method, url, payload=None):
 
-        Arguments:
+    if type(api_key) != StringType:
+        raise Exception("API key '%s' is not a string" % (api_key,))
 
-        agent_id -- the Agent to call
-        inputs -- dictionary of input values to send
+    uri = "%s%s" % (root, url)
 
-        Returns a tuple of the results and the evaluation ID, used for feedback.
-        """
-        (results, response) = self.request('POST', '/agent/%s' % agent_id, inputs)
-        return (results, response['x-evaluation-id'])
+    headers = {
+        "Authorization": "Bearer %s" % (api_key,)
+    }
 
-    def evaluate(self, agent_id, inputs):
-        """Make a fuzzy controller evaluation and return the results.
+    if payload:
+        headers["Content-Type"] = "application/json; charset=utf-8"
+        body = json.dumps(payload)
+    else:
+        body = None
 
-        Arguments:
+    (response, output) = http.request(uri, method, body, headers)
 
-        agent_id -- the Agent to call
-        inputs -- dictionary of input values to send
+    results = None
 
-        Returns the results as a dictionary.
-        """
-        (results, evid) = self.evaluate_with_id(agent_id, inputs)
-        return results
+    if 'content-type' in response:
+        contentType = str.split(response['content-type'], ';', 1)
+        if contentType[0] == "application/json":
+            results = json.loads(output)
 
-    def request(self, method, url, payload=None):
-        http = httplib2.Http()
-        uri = "%s%s" % (self.root, url)
-        headers = {
-            "Authorization": "Bearer %s" % (self.api_key,)
-        }
-
-        if payload:
-            headers["Content-Type"] = "application/json; charset=utf-8"
-            body = json.dumps(payload)
+    if response.status != 200:
+        if results:
+            message = results["message"]
         else:
-            body = None
+            message = output
+        raise HTTPError(response.status, message)
 
-        (response, output) = http.request(uri, method, body, headers)
-
-        results = None
-
-        if 'content-type' in response:
-            contentType = str.split(response['content-type'], ';', 1)
-            if contentType[0] == "application/json":
-                results = json.loads(output)
-
-        if response.status != 200:
-            if results:
-                message = results["message"]
-            else:
-                message = output
-            raise HTTPError(response.status, message)
-
-        return (results, response)
+    return (results, response)

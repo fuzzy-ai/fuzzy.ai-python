@@ -15,15 +15,12 @@
 # limitations under the License.
 
 from errors import DeletedAgentError, NoSuchAgentError, HTTPError
+from server import request
 
 class Agent:
     """A remote agent that can make evaluations"""
-    def __init__(self, server, id=None, name=None, inputs=None, outputs=None, rules=None):
+    def __init__(self, id=None, name=None, inputs=None, outputs=None, rules=None):
         """Initialize the agent.
-
-        Arguments:
-
-        server -- The Server instance to use for communication.
 
         Keyword arguments:
 
@@ -41,7 +38,6 @@ class Agent:
             a rule like 'IF input1 IS low AND input2 IS high THEN output1 IS medium'.
         """
 
-        self.server = server
         self.id = id
         self.inputs = inputs
         self.outputs = outputs
@@ -58,7 +54,7 @@ class Agent:
     def get(self):
         """Get the full Agent information from the server."""
         try:
-            (results, response) = self.server.request('GET', '/agent/%s' % self.id)
+            (results, response) = request('GET', '/agent/%s' % self.id)
             self.__fromResults(results)
         except HTTPError as err:
             if err.status == 404:
@@ -76,7 +72,7 @@ class Agent:
         }
         if self.name:
             payload['name'] = self.name
-        (results, response) = self.server.request('PUT', '/agent/%s' % self.id, payload)
+        (results, response) = request('PUT', '/agent/%s' % self.id, payload)
         self.__fromResults(results)
 
     def __create(self):
@@ -87,7 +83,7 @@ class Agent:
         }
         if self.name:
             payload['name'] = self.name
-        (results, response) = self.server.request('POST', '/agent', payload)
+        (results, response) = request('POST', '/agent', payload)
         self.__fromResults(results)
 
     def __fromResults(self, results):
@@ -101,7 +97,7 @@ class Agent:
 
     def delete(self):
         """Delete an agent from the server."""
-        self.server.request('DELETE', '/agent/%s' % self.id)
+        request('DELETE', '/agent/%s' % self.id)
 
     def evaluate_with_id(self, inputs):
         """Make a fuzzy evaluation.
@@ -112,7 +108,7 @@ class Agent:
         Returns a 2-tuple: a dictionary mapping string output names to float
         values, and a string for the evaluation ID.
         """
-        (results, response) = self.server.request('POST', '/agent/%s' % self.id, inputs)
+        (results, response) = request('POST', '/agent/%s' % self.id, inputs)
         return (results, response['x-evaluation-id'])
 
     def evaluate(self, inputs):

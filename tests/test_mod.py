@@ -44,23 +44,17 @@ def default_agent():
     ]
     return (inputs, outputs, rules)
 
-def test_server_class():
-    assert type(fuzzyio.Server) is ClassType
-
-def test_server_constructor():
-    f = fuzzyio.Server(API_KEY)
-    assert type(f) is InstanceType
+def test_evaluate_method():
+    assert type(fuzzyio.evaluate) is FunctionType
 
 def test_evaluate_method():
-    f = fuzzyio.Server(API_KEY)
-    assert type(f.evaluate) is MethodType
+    assert type(fuzzyio.evaluate_with_id) is FunctionType
 
 def test_agent_class():
     assert type(fuzzyio.Agent) is ClassType
 
 def test_agent_constructor():
-    f = fuzzyio.Server(API_KEY)
-    a = fuzzyio.Agent(f, AGENT_ID)
+    a = fuzzyio.Agent(AGENT_ID)
     assert type(a) is InstanceType
     assert type(a.id) is StringType
     assert a.id == AGENT_ID
@@ -68,40 +62,38 @@ def test_agent_constructor():
 def test_agent_keyword_constructor():
     name = 'test_agent_keyword_constructor'
     (inputs, outputs, rules) = default_agent()
-    f = fuzzyio.Server(API_KEY)
-    a = fuzzyio.Agent(f, name=name, inputs=inputs, outputs=outputs, rules=rules)
+    a = fuzzyio.Agent(name=name, inputs=inputs, outputs=outputs, rules=rules)
     assert a.inputs == inputs
     assert a.outputs == outputs
     assert a.rules == rules
 
 def test_save_method():
-    f = fuzzyio.Server(API_KEY)
-    a = fuzzyio.Agent(f, AGENT_ID)
+    a = fuzzyio.Agent(AGENT_ID)
     assert type(a.save) is MethodType
 
 def test_save_new_agent():
     name = 'test_save_new_agent'
     (inputs, outputs, rules) = default_agent()
-    f = fuzzyio.Server(API_KEY)
-    a = fuzzyio.Agent(f, name=name, inputs=inputs, outputs=outputs, rules=rules)
+    fuzzyio.setup(API_KEY)
+    a = fuzzyio.Agent(name=name, inputs=inputs, outputs=outputs, rules=rules)
     a.save()
     assert type(a.id) is UnicodeType
 
 def test_get_agent():
     name = 'test_get_agent'
     (inputs, outputs, rules) = default_agent()
-    f = fuzzyio.Server(API_KEY)
-    a1 = fuzzyio.Agent(f, name=name, inputs=inputs, outputs=outputs, rules=rules)
+    fuzzyio.setup(API_KEY)
+    a1 = fuzzyio.Agent(name=name, inputs=inputs, outputs=outputs, rules=rules)
     a1.save()
-    a2 = fuzzyio.Agent(f, id=a1.id)
+    a2 = fuzzyio.Agent(id=a1.id)
     a2.get()
     assert a2.inputs['input1']['low'][0] == a1.inputs['input1']['low'][0]
 
 def test_get_nonexistent_agent():
     name = 'test_get_nonexistent_agent'
     (inputs, outputs, rules) = default_agent()
-    f = fuzzyio.Server(API_KEY)
-    a1 = fuzzyio.Agent(f, id='***NONEXISTENT***')
+    fuzzyio.setup(API_KEY)
+    a1 = fuzzyio.Agent(id='***NONEXISTENT***')
     try:
         a1.get()
         assert False
@@ -113,8 +105,8 @@ def test_get_nonexistent_agent():
 def test_update_agent():
     name = 'test_update_agent'
     (inputs, outputs, rules) = default_agent()
-    f = fuzzyio.Server(API_KEY)
-    a1 = fuzzyio.Agent(f, name=name, inputs=inputs, outputs=outputs, rules=rules)
+    fuzzyio.setup(API_KEY)
+    a1 = fuzzyio.Agent(name=name, inputs=inputs, outputs=outputs, rules=rules)
     a1.save()
     a1.inputs['input2'] = {
         'low': [0, 1],
@@ -123,7 +115,7 @@ def test_update_agent():
     }
     a1.save()
 
-    a2 = fuzzyio.Agent(f, id=a1.id)
+    a2 = fuzzyio.Agent(id=a1.id)
     a2.get()
 
     assert 'input2' in a2.inputs
@@ -131,13 +123,13 @@ def test_update_agent():
 def test_delete_agent():
     name = 'test_delete_agent'
     (inputs, outputs, rules) = default_agent()
-    f = fuzzyio.Server(API_KEY)
-    a1 = fuzzyio.Agent(f, name=name, inputs=inputs, outputs=outputs, rules=rules)
+    fuzzyio.setup(API_KEY)
+    a1 = fuzzyio.Agent(name=name, inputs=inputs, outputs=outputs, rules=rules)
     a1.save()
     a1.delete()
     # We shouldn't be able to get a deleted agent
     try:
-        a2 = fuzzyio.Agent(f, id=a1.id)
+        a2 = fuzzyio.Agent(id=a1.id)
         a2.get()
         assert False
     except fuzzyio.DeletedAgentError:
@@ -148,8 +140,8 @@ def test_delete_agent():
 def test_evaluate_agent():
     name = 'test_evaluate_agent'
     (inputs, outputs, rules) = default_agent()
-    f = fuzzyio.Server(API_KEY)
-    a = fuzzyio.Agent(f, name=name, inputs=inputs, outputs=outputs, rules=rules)
+    fuzzyio.setup(API_KEY)
+    a = fuzzyio.Agent(name=name, inputs=inputs, outputs=outputs, rules=rules)
     a.save()
     results = a.evaluate({'input1': 1.5})
     assert type(results) is DictionaryType
@@ -160,8 +152,8 @@ def test_evaluate_agent():
 def test_agent_evaluate_with_id():
     name = 'test_agent_evaluate_with_id'
     (inputs, outputs, rules) = default_agent()
-    f = fuzzyio.Server(API_KEY)
-    a = fuzzyio.Agent(f, name=name, inputs=inputs, outputs=outputs, rules=rules)
+    fuzzyio.setup(API_KEY)
+    a = fuzzyio.Agent(name=name, inputs=inputs, outputs=outputs, rules=rules)
     a.save()
     (results, evid) = a.evaluate_with_id({'input1': 1.5})
     assert type(evid) is StringType
@@ -173,10 +165,10 @@ def test_agent_evaluate_with_id():
 def test_server_evaluate():
     name = 'test_evaluate_agent'
     (inputs, outputs, rules) = default_agent()
-    f = fuzzyio.Server(API_KEY)
-    a = fuzzyio.Agent(f, name=name, inputs=inputs, outputs=outputs, rules=rules)
+    fuzzyio.setup(API_KEY)
+    a = fuzzyio.Agent(name=name, inputs=inputs, outputs=outputs, rules=rules)
     a.save()
-    results = f.evaluate(a.id, {'input1': 0.5})
+    results = fuzzyio.evaluate(a.id, {'input1': 0.5})
     assert type(results) is DictionaryType
     assert 'output1' in results
     assert type(results['output1']) is FloatType
@@ -185,10 +177,10 @@ def test_server_evaluate():
 def test_server_evaluate_with_id():
     name = 'test_server_evaluate_with_id'
     (inputs, outputs, rules) = default_agent()
-    f = fuzzyio.Server(API_KEY)
-    a = fuzzyio.Agent(f, name=name, inputs=inputs, outputs=outputs, rules=rules)
+    fuzzyio.setup(API_KEY)
+    a = fuzzyio.Agent(name=name, inputs=inputs, outputs=outputs, rules=rules)
     a.save()
-    (results, evid) = f.evaluate_with_id(a.id, {'input1': 0.5})
+    (results, evid) = fuzzyio.evaluate_with_id(a.id, {'input1': 0.5})
     assert type(results) is DictionaryType
     assert type(evid) is StringType
     assert 'output1' in results
@@ -198,22 +190,22 @@ def test_server_evaluate_with_id():
 def test_evaluation():
     name = 'test_evaluation'
     (inputs, outputs, rules) = default_agent()
-    f = fuzzyio.Server(API_KEY)
-    a = fuzzyio.Agent(f, name=name, inputs=inputs, outputs=outputs, rules=rules)
+    fuzzyio.setup(API_KEY)
+    a = fuzzyio.Agent(name=name, inputs=inputs, outputs=outputs, rules=rules)
     a.save()
-    (results, evid) = f.evaluate_with_id(a.id, {'input1': 0.5})
-    e = fuzzyio.Evaluation(f, evid)
+    (results, evid) = fuzzyio.evaluate_with_id(a.id, {'input1': 0.5})
+    e = fuzzyio.Evaluation(evid)
     assert e.id == evid
     a.delete()
 
 def test_get_evaluation():
     name = 'test_get_evaluation'
     (inputs, outputs, rules) = default_agent()
-    f = fuzzyio.Server(API_KEY)
-    a = fuzzyio.Agent(f, name=name, inputs=inputs, outputs=outputs, rules=rules)
+    fuzzyio.setup(API_KEY)
+    a = fuzzyio.Agent(name=name, inputs=inputs, outputs=outputs, rules=rules)
     a.save()
-    (results, evid) = f.evaluate_with_id(a.id, {'input1': 0.5})
-    e = fuzzyio.Evaluation(f, evid)
+    (results, evid) = fuzzyio.evaluate_with_id(a.id, {'input1': 0.5})
+    e = fuzzyio.Evaluation(evid)
     e.get()
     assert type(e.id) == StringType
     assert type(e.input) == DictionaryType
@@ -230,11 +222,11 @@ def test_get_evaluation():
 def test_feedback():
     name = 'test_feedback'
     (inputs, outputs, rules) = default_agent()
-    f = fuzzyio.Server(API_KEY)
-    a = fuzzyio.Agent(f, name=name, inputs=inputs, outputs=outputs, rules=rules)
+    fuzzyio.setup(API_KEY)
+    a = fuzzyio.Agent(name=name, inputs=inputs, outputs=outputs, rules=rules)
     a.save()
     (results, evid) = a.evaluate_with_id({'input1': 0.5})
-    fb = fuzzyio.Feedback(f, evid, performance=8.1)
+    fb = fuzzyio.Feedback(evid, performance=8.1)
     assert fb.evid == evid
     assert fb.properties['performance'] == 8.1
     a.delete()
@@ -242,11 +234,11 @@ def test_feedback():
 def test_save_feedback():
     name = 'test_save_feedback'
     (inputs, outputs, rules) = default_agent()
-    f = fuzzyio.Server(API_KEY)
-    a = fuzzyio.Agent(f, name=name, inputs=inputs, outputs=outputs, rules=rules)
+    fuzzyio.setup(API_KEY)
+    a = fuzzyio.Agent(name=name, inputs=inputs, outputs=outputs, rules=rules)
     a.save()
     (results, evid) = a.evaluate_with_id({'input1': 0.5})
-    fb = fuzzyio.Feedback(f, evid, performance=8.1)
+    fb = fuzzyio.Feedback(evid, performance=8.1)
     fb.save()
     assert type(fb.id) == UnicodeType
     assert type(fb.createdAt) == UnicodeType
@@ -255,13 +247,13 @@ def test_save_feedback():
 def test_get_feedback():
     name = 'test_get_feedback'
     (inputs, outputs, rules) = default_agent()
-    f = fuzzyio.Server(API_KEY)
-    a = fuzzyio.Agent(f, name=name, inputs=inputs, outputs=outputs, rules=rules)
+    fuzzyio.setup(API_KEY)
+    a = fuzzyio.Agent(name=name, inputs=inputs, outputs=outputs, rules=rules)
     a.save()
     (results, evid) = a.evaluate_with_id({'input1': 0.5})
-    fb = fuzzyio.Feedback(f, evid, performance=8.1)
+    fb = fuzzyio.Feedback(evid, performance=8.1)
     fb.save()
-    e = fuzzyio.Evaluation(f, evid)
+    e = fuzzyio.Evaluation(evid)
     fbs = e.feedback()
     assert type(fbs) == ListType
     assert len(fbs) == 1

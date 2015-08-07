@@ -14,16 +14,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from server import request
+
 class Feedback:
     """Feedback on an evaluation"""
-    def __init__(self, server, evid=None, id=None, **kwargs):
-        self.server = server
+    def __init__(self, evid=None, id=None, **kwargs):
         self.evid = evid
         self.id = id
         self.properties = kwargs
     def save(self):
         if self.id:
             raise Exception("Feedback is immutable")
-        (results, response) = self.server.request('POST', '/evaluation/%s/feedback' % (self.evid), self.properties)
+        (results, response) = request('POST', '/evaluation/%s/feedback' % (self.evid), self.properties)
         self.id = results['id']
         self.createdAt = results['createdAt']
