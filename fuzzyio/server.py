@@ -21,7 +21,7 @@ from errors import HTTPError
 from types import StringType
 
 api_key = None
-root = "https://api.fuzzy.io"
+root = "https://api.fuzzy.ai"
 
 http = httplib2.Http()
 
