@@ -1,14 +1,14 @@
-Fuzzy.io SDK for Python
+Fuzzy.ai SDK for Python
 =======================
 
-A Python package for accessing the fuzzy.io API.
+A Python package for accessing the fuzzy.ai API.
 
-  https://fuzzy.io/
+  https://fuzzy.ai/
 
 License
 -------
 
-Copyright 2015 9165584 Canada Corporation <legal@fuzzy.io>
+Copyright 2015 9165584 Canada Corporation <legal@fuzzy.ai>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -27,35 +27,35 @@ Installation
 
 You can get this library by forking it from our Github repository::
 
-    git clone https://github.com/fuzzy-io/python.git
+    git clone https://github.com/fuzzy-ai/fuzzy.ai-python.git
 
 After that, you can just use regular setup.py stuff to set it up.
 
 Testing
 -------
 
-It uses pytest. However, you need to have a Fuzzy.io API key to make it work.
+It uses pytest. However, you need to have a Fuzzy.ai API key to make it work.
 You can get one by going to::
 
-  https://fuzzy.io/signup
+  https://fuzzy.ai/signup
 
-The test script (not the SDK itself!) looks for the API key in the FUZZY_IO_KEY
+The test script (not the SDK itself!) looks for the API key in the FUZZY_AI_KEY
 environment variable. So you can run the test something like this::
 
-  FUZZY_IO_KEY=<yourkeyhere> python -m pytest
+  FUZZY_AI_KEY=<yourkeyhere> python -m pytest
 
 Basic usage
 -----------
 
-When you use the fuzzyio module, you always have to provide your API key first.
+When you use the fuzzyai module, you always have to provide your API key first.
 Use the setup() function to do that::
 
-  import fuzzyio
+  import fuzzyai
 
-  fuzzyio.setup(YOUR_API_KEY)
+  fuzzyai.setup(YOUR_API_KEY)
 
-To have a Fuzzy.io agent make a decision for you, use the evaluate() function
-of the fuzzyio module::
+To have a Fuzzy.ai agent make a decision for you, use the evaluate() function
+of the fuzzyai module::
 
   from __future__ import print_function
 
@@ -66,7 +66,7 @@ of the fuzzyio module::
     "weight": 88.7
   }
 
-  outputs = fuzzyio.evaluate(agent_id, inputs)
+  outputs = fuzzyai.evaluate(agent_id, inputs)
 
   print outputs["run_distance"]
 
@@ -81,17 +81,17 @@ feedback() function::
     "weight": 88.7
   }
 
-  (outputs, evaluation_id) = fuzzyio.evaluate_with_id(agent_id, inputs)
+  (outputs, evaluation_id) = fuzzyai.evaluate_with_id(agent_id, inputs)
 
   # Real-world usage of the run_distance will return some performance
   # metric.
 
-  fuzzyio.feedback(evaluation_id, {"weight_loss": 0.25})
+  fuzzyai.feedback(evaluation_id, {"weight_loss": 0.25})
 
 Advanced usage
 --------------
 
-All of the Fuzzy.io API is available through this SDK.
+All of the Fuzzy.ai API is available through this SDK.
 
 The Agent class represents a single agent. It includes evaluate() and
 evaluate_with_id() methods as well as save() and delete() to change the agent
@@ -109,6 +109,6 @@ See also
 
 You can submit issues or make pull requests on Github.
 
-  https://github.com/fuzzy-io/python
+    https://github.com/fuzzy-ai/fuzzy.ai-python
 
-Thanks for using Fuzzy.io.
+Thanks for using Fuzzy.ai.

@@ -1,6 +1,6 @@
-# fuzzyio/errors/__init__.py
-
-# Copyright 2015 9165584 Canada Corporation <legal@fuzzy.io>
+# fuzzyio/errors/deleted_agent.py
+#
+# Copyright 2015 9165584 Canada Corporation <legal@fuzzy.ai>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,6 +14,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from deleted_agent import DeletedAgentError
-from no_such_agent import NoSuchAgentError
-from http import HTTPError
+class DeletedAgentError(Exception):
+    """Error thrown when accessing an agent that was deleted"""
+    def __init__(self, id):
+        """Arguments:
+
+        id -- ID of the agent
+        """
+        self.id = id
+    def __str__(self):
+        return "DeletedAgentError <%s>" % (self.id,)

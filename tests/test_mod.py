@@ -1,6 +1,6 @@
 # test_mod.py
 
-# Copyright 2015 9165584 Canada Corporation <legal@fuzzy.io>
+# Copyright 2015 9165584 Canada Corporation <legal@fuzzy.ai>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ import fuzzyio
 from types import *
 import os
 
-API_KEY = os.environ["FUZZY_IO_KEY"]
+API_KEY = os.environ["FUZZY_AI_KEY"]
 AGENT_ID = "ABABABAB"
 
 def default_agent():

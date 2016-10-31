@@ -1,6 +1,6 @@
 # fuzzyio/evaluation.py
 #
-# Copyright 2015 9165584 Canada Corporation <legal@fuzzy.io>
+# Copyright 2015 9165584 Canada Corporation <legal@fuzzy.ai>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.

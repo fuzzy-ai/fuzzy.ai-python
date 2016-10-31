@@ -5,15 +5,15 @@ from setuptools import setup, find_packages
 with codecs_open('README.rst', encoding='utf-8') as f:
     long_description = f.read()
 
-setup(name='fuzzyio',
+setup(name='fuzzy.ai',
       version='0.2.0',
-      description=u"fuzzy.io API",
+      description=u"fuzzy.ai API",
       long_description=long_description,
       classifiers=[],
       keywords='',
       author=u"Evan Prodromou",
-      author_email='evan@fuzzy.io',
-      url='https://github.com/fuzzy-io/python',
+      author_email='evan@fuzzy.ai',
+      url='https://github.com/fuzzy-ai/fuzzy.ai-python',
       license='Apache 2.0',
       packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
       include_package_data=True,

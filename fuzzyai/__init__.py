@@ -1,6 +1,6 @@
 # fuzzyio
 
-# Copyright 2015 9165584 Canada Corporation <legal@fuzzy.io>
+# Copyright 2015 9165584 Canada Corporation <legal@fuzzy.ai>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,16 +14,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""fuzzy.io library
+"""fuzzy.ai library
 
-This module provides important classes for accessing the fuzzy.io API.
+This module provides important classes for accessing the fuzzy.ai API.
 """
 
-from fuzzyio.agent import Agent
-from fuzzyio.evaluation import Evaluation
-from fuzzyio.feedback import Feedback
-from fuzzyio.errors import DeletedAgentError, NoSuchAgentError, HTTPError
-import fuzzyio.server
+from fuzzyai.agent import Agent
+from fuzzyai.evaluation import Evaluation
+from fuzzyai.feedback import Feedback
+from fuzzyai.errors import DeletedAgentError, NoSuchAgentError, HTTPError
+import fuzzyai.server
 
 def setup(api_key, root=None):
     """Configure fuzzyio modules for further requests
