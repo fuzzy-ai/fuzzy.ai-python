@@ -50,7 +50,7 @@ Use the setup() function to do that::
   client = Client(YOUR_API_KEY)
 
 To have a Fuzzy.ai agent make a decision for you, use the evaluate() function
-of the fuzzyai module:
+of the fuzzyai module::
 
   agent_id = "AGENTIDHERE"
 
