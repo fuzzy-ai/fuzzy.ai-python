@@ -19,11 +19,11 @@
 This module provides important classes for accessing the fuzzy.ai API.
 """
 
-from fuzzyai.agent import Agent
-from fuzzyai.evaluation import Evaluation
-from fuzzyai.feedback import Feedback
-from fuzzyai.errors import DeletedAgentError, NoSuchAgentError, HTTPError
-import fuzzyai.server
+from .agent import Agent
+from .evaluation import Evaluation
+from .feedback import Feedback
+from .errors import DeletedAgentError, NoSuchAgentError, HTTPError
+import server
 
 def setup(api_key, root=None):
     """Configure fuzzyio modules for further requests

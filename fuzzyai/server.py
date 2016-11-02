@@ -18,7 +18,6 @@ import httplib2
 import json
 
 from errors import HTTPError
-from types import StringType
 
 api_key = None
 root = "https://api.fuzzy.ai"
@@ -27,7 +26,7 @@ http = httplib2.Http()
 
 def request(method, url, payload=None):
 
-    if type(api_key) != StringType:
+    if not type(api_key) is str:
         raise Exception("API key '%s' is not a string" % (api_key,))
 
     uri = "%s%s" % (root, url)
