@@ -17,6 +17,8 @@
 import json
 import requests
 
+from version import VERSION
+
 
 class Client:
     """ Client object for interacting with the Fuzzy.ai API
@@ -28,7 +30,7 @@ class Client:
         self.headers = {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer %s' % self.key,
-            'User-Agent': 'fuzzy.ai-python/VERSION'
+            'User-Agent': 'fuzzy.ai-python/%s' % VERSION
 
         }
 

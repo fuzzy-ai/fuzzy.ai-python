@@ -18,10 +18,13 @@ with codecs_open('README.rst', encoding='utf-8') as f:
 
 install_requires = ['requests']
 
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'fuzzyai'))
+from version import VERSION
+
 setup(
     name='fuzzy.ai',
     cmdclass={'build_py': build_py},
-    version='0.2.0',
+    version=VERSION,
     description=u"fuzzy.ai API",
     long_description=long_description,
     author=u"Evan Prodromou",
