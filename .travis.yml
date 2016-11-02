@@ -5,6 +5,15 @@ python:
 - '3.3'
 - '3.4'
 - '3.5'
-- 'pypy'
+- pypy
 install: pip install tox-travis
 script: tox
+deploy:
+  provider: pypi
+  user: walkah
+  password:
+    secure: H2ursKHCpQDXMRBkgvFjHghEMJQK+Tr4k5hc/JCoXVYWk8tuktLjMGoYsAq13SP1gA3Gnt4HUlqZ97vuhBIn1SCk1l0ZEMiQtID28r6c3OvHwQ+gPXQnOY35QlZYiExa4lTqHE1yF9uJg5oIYu4YlDIwo/PFqd/2NVm7yNGsQLs=
+  on:
+    tags: true
+    distributions: sdist bdist_wheel
+    repo: fuzzy-ai/fuzzy.ai-python
