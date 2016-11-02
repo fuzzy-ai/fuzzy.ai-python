@@ -34,15 +34,10 @@ After that, you can just use regular setup.py stuff to set it up.
 Testing
 -------
 
-It uses pytest. However, you need to have a Fuzzy.ai API key to make it work.
-You can get one by going to::
+Testing uses tox and supports py27, py33, py34, py35 and pypy.
 
-  https://fuzzy.ai/signup
-
-The test script (not the SDK itself!) looks for the API key in the FUZZY_AI_KEY
-environment variable. So you can run the test something like this::
-
-  FUZZY_AI_KEY=<yourkeyhere> python -m pytest
+To run for a single version:
+  tox -e py27
 
 Basic usage
 -----------
@@ -50,14 +45,12 @@ Basic usage
 When you use the fuzzyai module, you always have to provide your API key first.
 Use the setup() function to do that::
 
-  import fuzzyai
+  from fuzzyai import Client
 
-  fuzzyai.setup(YOUR_API_KEY)
+  client = Client(YOUR_API_KEY)
 
 To have a Fuzzy.ai agent make a decision for you, use the evaluate() function
-of the fuzzyai module::
-
-  from __future__ import print_function
+of the fuzzyai module:
 
   agent_id = "AGENTIDHERE"
 
@@ -66,43 +59,12 @@ of the fuzzyai module::
     "weight": 88.7
   }
 
-  outputs = fuzzyai.evaluate(agent_id, inputs)
-
-  print outputs["run_distance"]
-
-If you need to provide feedback on the evaluation, use the evaluate_with_id()
-function to get an ID for the evaluation, and then provide that to the
-feedback() function::
-
-  agent_id = "AGENTIDHERE"
-
-  inputs = {
-    "height": 188
-    "weight": 88.7
-  }
-
-  (outputs, evaluation_id) = fuzzyai.evaluate_with_id(agent_id, inputs)
+  (outputs, evaluation_id) = client.evaluate(agent_id, inputs)
 
   # Real-world usage of the run_distance will return some performance
   # metric.
 
-  fuzzyai.feedback(evaluation_id, {"weight_loss": 0.25})
-
-Advanced usage
---------------
-
-All of the Fuzzy.ai API is available through this SDK.
-
-The Agent class represents a single agent. It includes evaluate() and
-evaluate_with_id() methods as well as save() and delete() to change the agent
-on the server. Use that last part carefully!
-
-The Evaluation class represents a single evaluation. It includes a get() method
-to fetch details about the evaluation and the feedback() method to fetch
-feedback on the evaluation.
-
-The Feedback class represents a single feedback data point. It has a save()
-method to generate feedback for an evaluation.
+  client.feedback(evaluation_id, {"weight_loss": 0.25})
 
 See also
 --------

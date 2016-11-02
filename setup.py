@@ -16,7 +16,7 @@ except ImportError:
 with codecs_open('README.rst', encoding='utf-8') as f:
     long_description = f.read()
 
-install_requires = []
+install_requires = ['requests']
 
 setup(
     name='fuzzy.ai',
