@@ -45,7 +45,7 @@ Basic usage
 When you use the fuzzyai module, you always have to provide your API key first.
 Use the setup() function to do that::
 
-  from fuzzyai import Client
+  from fuzzyai.client import Client
 
   client = Client(YOUR_API_KEY)
 
